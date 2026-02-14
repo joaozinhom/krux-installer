@@ -120,8 +120,9 @@ class BaseFlasher(Trigger):
             raise ValueError(f"Device not implemented: {device}")
 
         self._available_ports_generator = list_ports.grep(vid)
-        self._port = next(self._available_ports_generator).device
-        self.debug(f"port::setter={self._port} (from device {device})")
+        self._device_name = device
+        self._port = None  # Will be set lazily when needed
+        self.debug(f"port::setter configured for device {device} with VID {vid}")
 
     @property
     def board(self) -> str:
@@ -166,6 +167,27 @@ class BaseFlasher(Trigger):
                 f"baudrate {self.baudrate} exceeds embed_fire limit, capping at 400000"
             )
             self.baudrate = 400000
+
+    def get_port(self) -> str:
+        """
+        Lazily get the actual port device path.
+        This is called only when we actually need to use the port.
+        
+        Returns:
+            str: The port device path
+            
+        Raises:
+            RuntimeError: If no available ports found for the device
+        """
+        if self._port is None:
+            port_info = next(self._available_ports_generator, None)
+            if port_info is None:
+                device_name = getattr(self, '_device_name', 'unknown')
+                vid = self.DEVICE_VID_MAP.get(device_name, 'unknown')
+                raise RuntimeError(f"No available ports found for device {device_name} with VID {vid}")
+            self._port = port_info.device
+            self.debug(f"port lazily resolved to {self._port}")
+        return self._port
 
     def _log_error(self, message: str) -> None:
         """

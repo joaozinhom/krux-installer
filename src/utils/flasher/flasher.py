@@ -69,13 +69,20 @@ class Flasher(BaseFlasher):
         """
         self._detect_device_from_firmware()
 
+        # Lazily get the port only when we actually need it
+        try:
+            port = self.get_port()
+        except RuntimeError as port_exc:
+            self._log_error(str(port_exc))
+            return
+
         # Guard clause: check if port is working
-        if not self.is_port_working(self.port):
-            self._log_error(f"Port {self.port} not working")
+        if not self.is_port_working(port):
+            self._log_error(f"Port {port} not working")
             return
 
         try:
-            self._flash_with_port(self.port, callback)
+            self._flash_with_port(port, callback)
 
         except StopIteration as stop_exc:
             self._log_error(str(stop_exc))

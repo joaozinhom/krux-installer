@@ -52,14 +52,21 @@ class Wiper(BaseFlasher):
         """
         self._detect_device(device)
 
+        # Lazily get the port only when we actually need it
+        try:
+            port = self.get_port()
+        except RuntimeError as port_exc:
+            self._log_error(str(port_exc))
+            return
+
         # Guard clause: check if port is working
-        if not self.is_port_working(self.port):
-            self._log_error(f"Port {self.port} not working")
+        if not self.is_port_working(port):
+            self._log_error(f"Port {port} not working")
             return
 
         try:
             sys.argv.extend(
-                ["-B", self.board, "-b", str(self.baudrate), "-p", self.port, "-E"]
+                ["-B", self.board, "-b", str(self.baudrate), "-p", port, "-E"]
             )
             self.ktool.process()
 
