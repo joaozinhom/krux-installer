@@ -280,7 +280,10 @@ class TestAboutScreen(GraphicUnitTest):
     )
     @patch("sys.platform", "linux")
     @patch.object(EventLoopBase, "ensure_window", lambda x: None)
-    @patch("src.app.screens.greetings_screen.os.environ.get", return_value="mockuser")
+    @patch(
+        "src.app.screens.greetings_screen.os.environ.get",
+        side_effect=lambda key, *a, **kw: "mockuser" if key == "USER" else None,
+    )
     @patch(
         "src.app.screens.base_screen.BaseScreen.get_locale", return_value="en_US.UTF-8"
     )
@@ -321,7 +324,10 @@ class TestAboutScreen(GraphicUnitTest):
     )
     @patch("sys.platform", "linux")
     @patch.object(EventLoopBase, "ensure_window", lambda x: None)
-    @patch("src.app.screens.greetings_screen.os.environ.get", return_value="mockuser")
+    @patch(
+        "src.app.screens.greetings_screen.os.environ.get",
+        side_effect=lambda key, *a, **kw: "mockuser" if key == "USER" else None,
+    )
     @patch(
         "src.app.screens.base_screen.BaseScreen.get_locale", return_value="en_US.UTF-8"
     )

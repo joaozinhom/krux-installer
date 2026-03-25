@@ -39,16 +39,18 @@
             pkgs.gdk-pixbuf
             pkgs.atk
             pkgs.stdenv.cc.cc.lib
-          ] ++ pkgs.lib.optionals isLinux [
-            pkgs.polkit
-            pkgs.libGL
-            pkgs.mtdev
-            pkgs.shadow
-            pkgs.fontconfig
-            pkgs.pango
-            pkgs.gdk-pixbuf
-            pkgs.atk
-            pkgs.stdenv.cc.cc.lib
+            # Android / Buildozer build deps (shared: Linux + macOS)
+            pkgs.jdk17
+            pkgs.python313Packages.cython
+            pkgs.autoconf
+            pkgs.automake
+            pkgs.libtool
+            pkgs.cmake
+            pkgs.gnumake
+            pkgs.zip
+            pkgs.unzip
+            pkgs.which
+            pkgs.ccache
           ] ++ pkgs.lib.optionals isLinux [
             pkgs.polkit
             pkgs.libGL
@@ -67,28 +69,30 @@
             pkgs.SDL2_image
             pkgs.SDL2_mixer
             pkgs.SDL2_ttf
+            # Flatpak / Briefcase build deps (Linux-only: Flatpak doesn't exist on macOS)
+            pkgs.flatpak
+            pkgs.flatpak-builder
+            pkgs.elfutils
+            pkgs.ostree
+            pkgs.appstream
+            pkgs.bubblewrap
           ] ++ pkgs.lib.optionals isDarwin [
             pkgs.darwin.apple_sdk.frameworks.Cocoa
             pkgs.darwin.apple_sdk.frameworks.OpenGL
             pkgs.darwin.apple_sdk.frameworks.IOKit
           ];
 
-
           shellHook = ''
             export HOME="''${HOME:-$(pwd)/.home}"
             export XDG_DATA_HOME="$HOME/.local/share"
             export XDG_CONFIG_HOME="$HOME/.config"
-            export XDG_CONFIG_HOME="$HOME/.config"
             export XDG_CACHE_HOME="$HOME/.cache"
-
-
             mkdir -p "$HOME" "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME"
 
             export UV_CACHE_DIR="$XDG_CACHE_HOME/uv"
             export UV_PYTHON_INSTALL_DIR="$XDG_DATA_HOME/uv/python"
             export UV_TOOL_DIR="$XDG_DATA_HOME/uv/tools"
             export UV_TOOL_BIN_DIR="$XDG_DATA_HOME/uv/bin"
-
             mkdir -p "$UV_CACHE_DIR" "$UV_PYTHON_INSTALL_DIR" "$UV_TOOL_DIR" "$UV_TOOL_BIN_DIR"
 
             export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -96,6 +100,15 @@
             mkdir -p "$PIP_CACHE_DIR"
 
             export PATH="$UV_TOOL_BIN_DIR:$PATH"
+            export PYTHONPATH=$PWD/src:$PYTHONPATH
+
+            # Java / Android env (shared: Linux + macOS)
+            export JAVA_HOME="${pkgs.jdk17}"
+            export PATH="$JAVA_HOME/bin:$PATH"
+
+            export ANDROID_HOME="$XDG_DATA_HOME/android-sdk"
+            export ANDROID_SDK_ROOT="$ANDROID_HOME"
+            mkdir -p "$ANDROID_HOME"
 
             ${pkgs.lib.optionalString isLinux ''
               if [ -e "${pkgs.mtdev}/lib/libmtdev.so" ] && [ ! -e "${pkgs.mtdev}/lib/libmtdev.so.1" ]; then
@@ -110,9 +123,13 @@
               ${pkgs.mtdev}/lib:\
               ${pkgs.SDL2}/lib:\
               $LD_LIBRARY_PATH
-            ''}
 
-            export PYTHONPATH=$PWD/src:$PYTHONPATH
+              if ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+                echo "Registering Flathub remote (needed for Briefcase Flatpak builds)..."
+                flatpak remote-add --user --if-not-exists flathub \
+                  https://flathub.org/repo/flathub.flatpakrepo || true
+              fi
+            ''}
 
             echo "Development environment setup complete!"
             echo "UV cache: $UV_CACHE_DIR"
