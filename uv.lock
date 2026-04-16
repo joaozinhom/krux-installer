@@ -723,6 +723,7 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=7.1.0" },
 ]
 provides-extras = ["dev", "builder"]
+provides-extras = ["dev", "builder"]
 
 [package.metadata.requires-dev]
 dev = [
