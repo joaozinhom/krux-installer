@@ -16,7 +16,7 @@ dependencies = [
     "qrcode>=8.2",
     "easy-i18n>=1.2.0",
     "pysudoer @ git+https://github.com/qlrd/pysudoer.git",
-    "pyinstaller>=6.19.0",
+    "pyinstaller>=6.20.0",
     "pygame>=2.6.1",
 ]
 
