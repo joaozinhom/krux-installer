@@ -1,3 +1,4 @@
+[project]
 name = "krux-installer"
 version = "0.0.22"
 description = "A GUI based application to flash Krux firmware on K210 based devices"
@@ -46,9 +47,6 @@ dev-dependencies = [
     "poethepoet>=0.47.0",
     "demjson3>=3.0.6",
     "pymarkdownlnt>=0.9.34",
-    "briefcase>=0.3.20",
-    "buildozer>=1.5.0",
-    "cython>=3.0.0",
 ]
 
 [tool.briefcase]
