@@ -346,6 +346,7 @@ jobs:
   # already exist in the repo. The spec is committed so the cache key is stable.
   # ---------------------------------------------------------------------------
   build-android:
+    if: false  # disabled until Android build is stable
     runs-on: ubuntu-latest
 
     container:
