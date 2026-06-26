@@ -25,8 +25,10 @@ dev = [
     "poethepoet>=0.47.0",
     "demjson3>=3.0.6",
     "briefcase>=0.3.20",
-    "buildozer>=1.5.0",
-    "cython>=3.0.0",
+    # Android/APK (BeeWare/Buildozer) — disabled for now, focusing on Flatpak.
+    # Android is future work; preserved in comments.
+    # "buildozer>=1.5.0",
+    # "cython>=3.0.0",
 ]
 builder = [
     "cryptography>=49.0.0",
@@ -123,10 +125,12 @@ clean = "python .ci/clean.py"
 package-flatpak = "briefcase package linux flatpak"
 run-flatpak = "briefcase run linux flatpak"
 
-build-android-debug   = "buildozer android debug"
-build-android-release = "buildozer android release"
-run-android           = "buildozer android debug deploy run"
-clean-android         = "buildozer android clean"
+# Android/APK (BeeWare/Buildozer) build tasks — disabled for now, focusing on
+# Flatpak. Android is future work; preserved in comments.
+# build-android-debug   = "buildozer android debug"
+# build-android-release = "buildozer android release"
+# run-android           = "buildozer android debug deploy run"
+# clean-android         = "buildozer android clean"
 
 test-unit = "pytest --cache-clear --cov=src/utils/constants --cov=src/utils/info --cov=src/utils/selector --cov=src/utils/downloader --cov=src/utils/trigger --cov=src/utils/flasher --cov=src/utils/unzip --cov=src/utils/signer --cov=src/utils/verifyer --cov=src/i18n --cov-branch --cov-report html ./tests"
 test-e2e = "pytest --cov-append --cov=src/app --cov-branch --cov-report html ./e2e"

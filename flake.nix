@@ -40,17 +40,18 @@
             pkgs.atk
             pkgs.stdenv.cc.cc.lib
             # Android / Buildozer build deps (shared: Linux + macOS)
-            pkgs.jdk17
-            pkgs.python313Packages.cython
-            pkgs.autoconf
-            pkgs.automake
-            pkgs.libtool
-            pkgs.cmake
-            pkgs.gnumake
-            pkgs.zip
-            pkgs.unzip
-            pkgs.which
-            pkgs.ccache
+            # DISABLED for now — focusing on Flatpak; Android is future work.
+            # pkgs.jdk17
+            # pkgs.python313Packages.cython
+            # pkgs.autoconf
+            # pkgs.automake
+            # pkgs.libtool
+            # pkgs.cmake
+            # pkgs.gnumake
+            # pkgs.zip
+            # pkgs.unzip
+            # pkgs.which
+            # pkgs.ccache
           ] ++ pkgs.lib.optionals isLinux [
             pkgs.polkit
             pkgs.libGL
@@ -103,12 +104,13 @@
             export PYTHONPATH=$PWD/src:$PYTHONPATH
 
             # Java / Android env (shared: Linux + macOS)
-            export JAVA_HOME="${pkgs.jdk17}"
-            export PATH="$JAVA_HOME/bin:$PATH"
-
-            export ANDROID_HOME="$XDG_DATA_HOME/android-sdk"
-            export ANDROID_SDK_ROOT="$ANDROID_HOME"
-            mkdir -p "$ANDROID_HOME"
+            # DISABLED for now — focusing on Flatpak; Android is future work.
+            # export JAVA_HOME="''${pkgs.jdk17}"
+            # export PATH="$JAVA_HOME/bin:$PATH"
+            #
+            # export ANDROID_HOME="$XDG_DATA_HOME/android-sdk"
+            # export ANDROID_SDK_ROOT="$ANDROID_HOME"
+            # mkdir -p "$ANDROID_HOME"
 
             ${pkgs.lib.optionalString isLinux ''
               if [ -e "${pkgs.mtdev}/lib/libmtdev.so" ] && [ ! -e "${pkgs.mtdev}/lib/libmtdev.so.1" ]; then
