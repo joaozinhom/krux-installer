@@ -68,6 +68,10 @@ sources = [
     "krux_installer",
     "src",
     "assets",
+    # get_version()/get_name() read pyproject.toml at runtime from the app
+    # root (src/utils/constants -> ../../../pyproject.toml). Bundle it so the
+    # Flatpak/Briefcase build can find it.
+    "pyproject.toml",
 ]
 requires = [
     "kivy==2.3.1",
@@ -132,7 +136,7 @@ run-flatpak = "briefcase run linux flatpak"
 # run-android           = "buildozer android debug deploy run"
 # clean-android         = "buildozer android clean"
 
-test-unit = "pytest --cache-clear --cov=src/utils/constants --cov=src/utils/info --cov=src/utils/selector --cov=src/utils/downloader --cov=src/utils/trigger --cov=src/utils/flasher --cov=src/utils/unzip --cov=src/utils/signer --cov=src/utils/verifyer --cov=src/i18n --cov-branch --cov-report html ./tests"
+test-unit = "pytest --cache-clear --cov=src/utils/constants --cov=src/utils/info --cov=src/utils/trigger --cov=src/utils/flasher --cov=src/utils/verifyer --cov=src/i18n --cov-branch --cov-report html ./tests"
 test-e2e = "pytest --cov-append --cov=src/app --cov-branch --cov-report html ./e2e"
 test-drives = "pytest --cov-append --cov=src/app --cov-branch --cov-report html ./e2e_drives"
 test = ["test-unit", "test-e2e", "test-drives"]

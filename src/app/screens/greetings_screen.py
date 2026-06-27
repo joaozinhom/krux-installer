@@ -185,14 +185,10 @@ class GreetingsScreen(BaseScreen):
         """
         if sys.platform.startswith("linux"):
             if os.environ.get("FLATPAK_ID"):
-                fn = partial(
-                    self.update, name=self.name, key="check-internet-connection"
-                )
-                Clock.schedule_once(fn, 0)
+                self.set_screen(name="MainScreen", direction="left")
                 return
 
             _user = str(os.environ.get("USER"))
-            _in_dialout = False
             _distro, _group = self.get_os_dialout_group()
 
             if not self.is_user_in_dialout_group(user=_user, group=_group):
@@ -207,9 +203,6 @@ class GreetingsScreen(BaseScreen):
                     Clock.schedule_once(fn, 0)
                 self.set_screen(name="AskPermissionDialoutScreen", direction="left")
             else:
-                fn = partial(
-                    self.update, name=self.name, key="check-internet-connection"
-                )
-                Clock.schedule_once(fn, 0)
+                self.set_screen(name="MainScreen", direction="left")
         else:
             self.set_screen(name="MainScreen", direction="left")

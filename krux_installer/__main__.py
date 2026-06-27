@@ -36,3 +36,7 @@ def main():
     """Entry point used by Briefcase (Flatpak) builds."""
     app = KruxInstallerApp()
     app.run()
+
+
+if __name__ == "__main__":
+    main()
