@@ -89,14 +89,15 @@ flatpak_runtime = "org.freedesktop.Platform"
 flatpak_runtime_version = "24.08"
 flatpak_sdk = "org.freedesktop.Sdk"
 
-[tool.briefcase.app.krux-installer.linux.flatpak.env]
-KIVY_INPUT = "sdl2"
-
 [tool.briefcase.app.krux-installer.linux.flatpak.finish_arg]
 "share=network" = true
 "share=ipc" = true
 "socket=x11" = true
 "socket=wayland" = true
+# Briefcase adds --nosocket=wayland by default; it must be explicitly
+# disabled or the manifest carries both flags and Wayland access depends
+# on argument order.
+"nosocket=wayland" = false
 "device=all" = true
 "socket=pulseaudio" = true
 "filesystem=xdg-cache" = true

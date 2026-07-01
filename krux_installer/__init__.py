@@ -23,9 +23,6 @@ krux_installer/__init__.py
 """
 import os
 
-# Suppress mtdev — libmtdev.so.1 is not available in the Flatpak runtime
-os.environ.setdefault("KIVY_INPUT", "sdl2")
-
 # Auto-detect display server: prefer Wayland if available, fall back to X11
 if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
     os.environ.setdefault("SDL_VIDEODRIVER", "wayland")
