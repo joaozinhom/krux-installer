@@ -436,6 +436,10 @@ class TestAboutScreen(GraphicUnitTest):
         mock_get_locale.assert_called()
         open_mock.assert_called_once_with("/etc/os-release", mode="r", encoding="utf-8")
 
+    @mark.skipif(
+        sys.platform in ("win32"),
+        reason="does not run on windows",
+    )
     @patch.object(EventLoopBase, "ensure_window", lambda x: None)
     @patch(
         "src.app.screens.base_screen.BaseScreen.get_locale", return_value="en_US.UTF-8"
@@ -457,6 +461,10 @@ class TestAboutScreen(GraphicUnitTest):
         mock_getgrnam.assert_called_once_with("dialout")
         mock_get_locale.assert_called()
 
+    @mark.skipif(
+        sys.platform in ("win32"),
+        reason="does not run on windows",
+    )
     @patch.object(EventLoopBase, "ensure_window", lambda x: None)
     @patch(
         "src.app.screens.base_screen.BaseScreen.get_locale", return_value="en_US.UTF-8"
