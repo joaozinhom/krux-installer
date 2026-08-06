@@ -5,7 +5,7 @@ description = "A GUI based application to flash Krux firmware on K210 based devi
 authors = [
     {name = "qlrd", email = "qlrddev@gmail.com"}
 ]
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 readme = "README.md"
 requires-python = ">3.10,<=3.14.3"
 dependencies = [
@@ -24,6 +24,11 @@ dev = [
     "pytest-cov>=7.1.0",
     "poethepoet>=0.48.0",
     "demjson3>=3.0.6",
+    "briefcase>=0.3.20",
+    # Android/APK (BeeWare/Buildozer) — disabled for now, focusing on Flatpak.
+    # Android is future work; preserved in comments.
+    # "buildozer>=1.5.0",
+    # "cython>=3.0.0",
 ]
 builder = [
     "cryptography>=49.0.0",
@@ -43,8 +48,64 @@ dev-dependencies = [
     "pytest-cov>=7.1.0",
     "poethepoet>=0.48.0",
     "demjson3>=3.0.6",
-    "pymarkdownlnt>=0.9.34"
+    "pymarkdownlnt>=0.9.34",
 ]
+
+[tool.briefcase]
+project_name = "Krux Installer"
+bundle = "io.selfcustody"
+version = "0.0.22"
+url = "https://github.com/selfcustody/krux-installer"
+license.file = "LICENSE"
+author = "qlrd"
+author_email = "qlrddev@gmail.com"
+
+[tool.briefcase.app.krux-installer]
+formal_name = "Krux Installer"
+description = "A GUI based application to flash Krux firmware on K210 based devices"
+icon = "assets/icon"
+sources = [
+    "krux_installer",
+    "src",
+    "assets",
+    # get_version()/get_name() read pyproject.toml at runtime from the app
+    # root (src/utils/constants -> ../../../pyproject.toml). Bundle it so the
+    # Flatpak/Briefcase build can find it.
+    "pyproject.toml",
+]
+requires = [
+    "kivy==2.3.1",
+    "pyserial>=3.5",
+    "requests>=2.32.5",
+    "cryptography>=46.0.5",
+    "qrcode>=8.2",
+    "easy-i18n>=1.2.0",
+    "pygame>=2.6.1",
+]
+main_module = "krux_installer"
+
+[tool.briefcase.app.krux-installer.linux.flatpak]
+flatpak_runtime = "org.freedesktop.Platform"
+flatpak_runtime_version = "24.08"
+flatpak_sdk = "org.freedesktop.Sdk"
+
+[tool.briefcase.app.krux-installer.linux.flatpak.finish_arg]
+"share=network" = true
+"share=ipc" = true
+"socket=x11" = true
+"socket=wayland" = true
+# Briefcase adds --nosocket=wayland by default; it must be explicitly
+# disabled or the manifest carries both flags and Wayland access depends
+# on argument order.
+"nosocket=wayland" = false
+"device=all" = true
+"socket=pulseaudio" = true
+"filesystem=xdg-cache" = true
+"filesystem=xdg-config" = true
+"filesystem=xdg-data" = true
+"filesystem=xdg-documents" = true
+"socket=session-bus" = true
+"system-talk-name=org.freedesktop.login1" = true
 
 [tool.poe.tasks]
 cli = "python src/krux_installer.py"
@@ -65,6 +126,16 @@ format = [
 fetch-firmware = "bash prebuild/fetch_firmware.sh"
 
 clean = "python .ci/clean.py"
+
+package-flatpak = "briefcase package linux flatpak"
+run-flatpak = "briefcase run linux flatpak"
+
+# Android/APK (BeeWare/Buildozer) build tasks — disabled for now, focusing on
+# Flatpak. Android is future work; preserved in comments.
+# build-android-debug   = "buildozer android debug"
+# build-android-release = "buildozer android release"
+# run-android           = "buildozer android debug deploy run"
+# clean-android         = "buildozer android clean"
 
 test-unit = "pytest --cache-clear --cov=src/utils/constants --cov=src/utils/info --cov=src/utils/trigger --cov=src/utils/flasher --cov=src/utils/verifyer --cov=src/i18n --cov-branch --cov-report html ./tests"
 test-e2e = "pytest --cov-append --cov=src/app --cov-branch --cov-report html ./e2e"
@@ -131,6 +202,12 @@ sequence = [
   { cmd = "python .ci/create-spec.py --loglevel=${debug}" },
   { interpreter = ["powershell", "pwsh"], shell = "& .ci/edit-spec.ps1" },
   { cmd = "python .ci/build.py --loglevel=${debug}" },
+]
+
+[tool.poe.tasks.build-flatpak]
+sequence = [
+  { cmd = "briefcase create linux flatpak" },
+  { cmd = "briefcase build linux flatpak" },
 ]
 
 [tool.poe.tasks.dev-debug]

@@ -92,7 +92,11 @@ class KruxInstallerApp(ConfigKruxInstaller):
         screens = []
         screens.append(GreetingsScreen())
 
-        if sys.platform == "linux":
+        # The dialout-group permission flow is meaningless inside a Flatpak
+        # sandbox (usermod can't run, and device access goes through the
+        # portal / device=all). Skip constructing the screen there — its
+        # __init__ runs distro detection that fails on the freedesktop runtime.
+        if sys.platform == "linux" and not os.environ.get("FLATPAK_ID"):
             screens.append(AskPermissionDialoutScreen())
 
         screens = screens + [

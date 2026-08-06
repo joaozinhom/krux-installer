@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    intent-filter.xml
+    Tells Android to launch Krux Installer when a compatible USB device
+    is attached (USB OTG / USB host mode).
+
+    Referenced by buildozer.spec:
+        android.manifest.intent_filters = src/android/intent-filter.xml
+-->
+<resources>
+    <intent-filter>
+        <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
+    </intent-filter>
+    <meta-data
+        android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+        android:resource="@xml/device_filter"/>
+</resources>

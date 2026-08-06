@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    device_filter.xml
+    Declares which USB vendor IDs should trigger the USB_DEVICE_ATTACHED
+    intent that routes to Krux Installer.
+
+    Place this file at:  src/android/res/xml/device_filter.xml
+    Buildozer will copy it to the APK's res/xml/ via:
+        android.res_xml = src/android/res/xml/device_filter.xml
+
+    Vendor IDs for common K210 board USB-serial chips:
+        0x0403  FTDI FT232 / FT2232    (Sipeed Maixduino, some Amigo revisions)
+        0x1a86  CH340 / CH341          (most Sipeed boards, Yahboom boards)
+        0x10c4  Silicon Labs CP2102    (M5StickV, some Bit boards)
+        0x0403  also covers FT4232H used on some dock boards
+-->
+<resources>
+    <!-- FTDI -->
+    <usb-device vendor-id="1027" />   <!-- 0x0403 -->
+    <!-- WCH CH340 / CH341 -->
+    <usb-device vendor-id="6790" />   <!-- 0x1a86 -->
+    <!-- Silicon Labs CP210x -->
+    <usb-device vendor-id="4292" />   <!-- 0x10c4 -->
+</resources>
